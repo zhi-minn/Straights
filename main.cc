@@ -3,13 +3,14 @@
 #include <stdexcept>
 #include <memory>
 #include <stdlib.h>
+#include <chrono>
 #include "controller.h"
 #include "display.h"
 #include "scoreView.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int seed = 42;
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     string cmd;
     char inp1, inp2;
     if (argc > 1) {
@@ -52,6 +53,7 @@ int main(int argc, char* argv[]) {
                             exit(0);
                         } else if (cmd == "ragequit") {
                             controller->ragequit();
+                            scoreView->setPlayers(controller->getPlayers());
                             break;
                         } else {
                             throw invalid_argument("Invalid command: \"" + cmd + "\"");
