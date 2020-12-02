@@ -47,6 +47,7 @@ int Player::findCard(shared_ptr<Card> card) {
             return i;
         }
     }
+    return 0;
 }
 
 bool Player::has7S() const {

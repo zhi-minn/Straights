@@ -36,7 +36,7 @@ ostream &operator<<(ostream & out, const Card & c) {
     int rank = c.getRank();
     char suit = c.getSuit();
 
-    if (rank == 1 | rank > 9) {
+    if (rank == 1 || rank > 9) {
         out << c.getDisplayRank();
     } else {
         out << rank;

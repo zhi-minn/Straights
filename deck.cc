@@ -23,7 +23,7 @@ void Deck::makeCards() {
         } else {
             suit = 'S';
         }
-        if (i == 13 | i == 26 || i == 39 || i == 52) {
+        if (i == 13 || i == 26 || i == 39 || i == 52) {
             cards.emplace_back(make_shared<Card>(suit, 13));
         } else {
             cards.emplace_back(make_shared<Card>(suit, i%13));
