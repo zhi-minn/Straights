@@ -20,7 +20,13 @@ class Controller {
     public:
       Controller(int seed);
       
+      void announceWinners();
+
+      void makePlayers();
+
       void addPlayer(char type, int playerNum);
+
+      char playerType();
 
       void createDeck();
 
@@ -30,9 +36,15 @@ class Controller {
 
       void roundBegin();
 
+      bool roundEnd();
+
       void roundReset();
 
+      bool gameEnd();
+
       void setGameStatePlayers();
+
+      std::vector<std::shared_ptr<Player>> getPlayers() const;
 
       void attachDisplay(std::shared_ptr<Display> &);
 
@@ -42,9 +54,19 @@ class Controller {
 
       void playerTurn();
 
+      bool isComputerTurn();
+
+      void autoplayComputer();
+
+      void nextTurn();
+
+      void ragequit();
+
       void playCard(char suit, char rank);
 
       void discard(char suit, char rank);
+
+      void tabulateScore();
 };
 
 #endif

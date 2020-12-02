@@ -9,7 +9,7 @@ void GameState::setPlayers(vector<shared_ptr<Player>> &_players) {
 
 bool GameState::roundEnd() {
     for (auto player : players) {
-        if (player->getHand().size() != 0) {
+        if (player->getInfo().hand.size() != 0) {
             return false;
         }
     }
@@ -18,7 +18,7 @@ bool GameState::roundEnd() {
 
 bool GameState::gameEnd() {
     for (auto player : players) {
-        if (player->getScore() >= 80) {
+        if (player->getInfo().score >= 80) {
             return true;
         }
     }
@@ -28,8 +28,8 @@ bool GameState::gameEnd() {
 vector<int> GameState::getWinner() {
     vector<int> winnerNumbers;
     for (auto player : players) {
-        if (player->getScore() == lowestScore) {
-            winnerNumbers.emplace_back(player->getNum());
+        if (player->getInfo().score == lowestScore) {
+            winnerNumbers.emplace_back(player->getInfo().number);
         }
     }
     return winnerNumbers;
@@ -40,16 +40,15 @@ void GameState::setCurrPlayer(int playerNum) {
 }
 
 void GameState::setLowestScore() {
-    lowestScore = players[0]->getScore();
+    lowestScore = players[0]->getInfo().score;
     for (auto player : players) {
-        if (player->getScore() < lowestScore) {
-            lowestScore = player->getScore();
+        if (player->getInfo().score < lowestScore) {
+            lowestScore = player->getInfo().score;
         }
     }
 }
 
 void GameState::playerTurn() {
-    cout << currPlayer << endl;
     shared_ptr<Player> player = players[currPlayer];
     player->setLegalPlays();
     notifyObservers();
@@ -62,10 +61,10 @@ int GameState::getTurn() const {
 void GameState::nextTurn() {
     currPlayer++;
     if (currPlayer == 4) {
-        currPlayer = 1;
+        currPlayer = 0;
     }
 }
 
 Info GameState::getInfo() {
-    return Info{players[currPlayer]->getHand(), players[currPlayer]->getLegalPlays()};
+    return Info{players[currPlayer]->getInfo().hand, players[currPlayer]->getInfo().legalPlays};
 }

@@ -8,7 +8,7 @@ class Table;
 
 class HumanPlayer : public Player {
     public:
-      HumanPlayer(std::shared_ptr<Table> table, int playerNum);
+      HumanPlayer(std::shared_ptr<Table> table, int playerNum, char playerType);
 };
 
 #endif

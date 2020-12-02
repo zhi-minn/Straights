@@ -5,8 +5,6 @@
 #include "info.h"
 using namespace std;
 
-const vector<string> suits = {"Clubs:", "Diamonds:", "Hearts:", "Spades:"};
-
 void Display::setTable(shared_ptr<Table> _table) {
     table = _table;
 }
@@ -18,14 +16,8 @@ void Display::notify( Subject & whoNotified ) {
 }
 
 ostream &operator<<(ostream &out, const Display &display) {
-    out << "Cards on the table:" << endl;
-    for (int i = 0; i < 4; i++) {
-        out << suits[i] << " ";
-        for (auto card : display.table->getPile(i)) {
-            out << *card << " ";
-        }
-        out << endl;
-    }
+    out << *(display.table);    
+
     out << "Your hand: ";
     for (auto card : display.playerHand) {
         out << *card << " ";

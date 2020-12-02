@@ -16,12 +16,29 @@ Controller::Controller(int seed): seed{seed} {
     deck = make_shared<Deck>(seed);
 }
 
+void Controller::announceWinners() {
+    vector<int> winnerNumbers = gameState->getWinner();
+    for (auto number : winnerNumbers) {
+        cout << "Player" << number << " wins!" << endl;
+    }
+}
+
+void Controller::makePlayers() {
+    char inp;
+    for (int i = 1; i <= 4; i++) {
+        cout << "Is Player" << i << " a human(h) or a computer(c)?" << endl;
+        cout << ">";
+        cin >> inp;
+        addPlayer(inp, i);
+    }
+}
+
 void Controller::addPlayer(char type, int playerNum) {
     assert(type == 'c' || type == 'h');
     if (type == 'h') {
-        players.emplace_back(make_shared<HumanPlayer>(table, playerNum));
+        players.emplace_back(make_shared<HumanPlayer>(table, playerNum, type));
     } else {
-        players.emplace_back(make_shared<ComputerPlayer>(table, playerNum));
+        players.emplace_back(make_shared<ComputerPlayer>(table, playerNum, type));
     }
 }
 
@@ -34,20 +51,16 @@ void Controller::shuffleDeck() {
 }
 
 void Controller::dealCards() {
-    shared_ptr<Player> player1 = findPlayer(1);
-    shared_ptr<Player> player2 = findPlayer(2);
-    shared_ptr<Player> player3 = findPlayer(3);
-    shared_ptr<Player> player4 = findPlayer(4);
     
     for (int i = 0; i < deck->getSize(); i++) {
         if (i <= 12) {
-            player1->addCard(deck->getCard(i));
+            players[0]->addCard(deck->getCard(i));
         } else if (i <= 25) {
-            player2->addCard(deck->getCard(i));
+            players[1]->addCard(deck->getCard(i));
         } else if (i <= 38) {
-            player3->addCard(deck->getCard(i));
+            players[2]->addCard(deck->getCard(i));
         } else {
-            player4->addCard(deck->getCard(i));
+            players[3]->addCard(deck->getCard(i));
         }
     }
 }
@@ -57,22 +70,35 @@ void Controller::roundBegin() {
     dealCards();
     for (auto player : players) {
         if (player->has7S()) {
-            gameState->setCurrPlayer(player->getNum()-1);
-            cout << "A new round begins. It's Player" << player->getNum();
+            gameState->setCurrPlayer(player->getInfo().number-1);
+            cout << "A new round begins. It's Player" << player->getInfo().number;
             cout << "\'s turn to play." << endl;
             break;
         }
     }
 }
 
+bool Controller::roundEnd() {
+    return gameState->roundEnd();
+}
+
 void Controller::roundReset() {
     for (auto player : players) {
         player->clear();
     }
+    table->clearTable();
+}
+
+bool Controller::gameEnd() {
+    return gameState->gameEnd();
 }
 
 void Controller::setGameStatePlayers() {
     gameState->setPlayers(players);
+}
+
+vector<shared_ptr<Player>> Controller::getPlayers() const {
+    return players;
 }
 
 void Controller::attachDisplay(shared_ptr<Display> &display) {
@@ -91,6 +117,40 @@ void Controller::playerTurn() {
     gameState->playerTurn();
 }
 
+bool Controller::isComputerTurn() {
+    shared_ptr<Player> player = players[gameState->getTurn()];
+    if (player->getInfo().type == 'c') {
+        return true;
+    }
+    return false;
+}
+
+void Controller::nextTurn() {
+    gameState->nextTurn();
+}
+
+void Controller::autoplayComputer() {
+    shared_ptr<Player> player = players[gameState->getTurn()];
+    dynamic_pointer_cast<ComputerPlayer>(player)->autoplay();
+}
+
+void Controller::ragequit() {
+    cout << "Player" << gameState->getTurn()+1 << " ragequits. ";
+    cout << "A computer will now take over." << endl;
+    
+    PlayerInfo info = players[gameState->getTurn()]->getInfo();
+    vector<shared_ptr<Card>> hand = info.hand;
+    vector<shared_ptr<Card>> discards = info.discards;
+    vector<shared_ptr<Card>> legalPlays = info.legalPlays;
+    shared_ptr<Player> computer = make_shared<ComputerPlayer>(table, info.number,
+                                                            'c', hand, discards,
+                                                            legalPlays, info.score);
+    players[info.number-1] = computer;
+    gameState->setPlayers(players);
+    autoplayComputer();
+    gameState->nextTurn();
+}
+
 void Controller::playCard(char rank, char suit) {
     int turn = gameState->getTurn();
     players[turn]->validateCard(rank, suit);    
@@ -101,4 +161,11 @@ void Controller::discard(char rank, char suit) {
     int turn = gameState->getTurn();
     players[turn]->validateDiscard(rank, suit);
     gameState->nextTurn();
+}
+
+void Controller::tabulateScore() {
+    for (auto player : players) {
+        player->tabulateScore();
+    }
+    gameState->setLowestScore();
 }

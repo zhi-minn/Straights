@@ -38,8 +38,8 @@ shared_ptr<Card> Player::getCard(int rank, char suit) {
     return nullptr;
 }
 
-Player::Player(shared_ptr<Table> table, int playerNum)
-    : table{table}, playerNumber{playerNum} {}
+Player::Player(shared_ptr<Table> table, int playerNum, char playerType)
+    : table{table}, playerNumber{playerNum}, playerType{playerType} {}
 
 int Player::findCard(shared_ptr<Card> card) {
     for (size_t i = 0; i < hand.size(); i++) {
@@ -72,6 +72,7 @@ void Player::validateCard(char rank, char suit) {
     shared_ptr<Card> card = getCard(rankConvert, suit);
     if (card != nullptr) {
         play(card);
+        cout << "Player" << playerNumber << " plays " << rank << suit << "." << endl;
     } else {
         throw invalid_argument("This is not a legal play.");
     }
@@ -85,7 +86,6 @@ void Player::discard(shared_ptr<Card> card) {
     int cardIndex = findCard(card);
     discards.emplace_back(card);
     hand.erase(hand.begin() + cardIndex);
-    score += card->getRank();
 }
 
 void Player::validateDiscard(char rank, char suit) {
@@ -93,10 +93,13 @@ void Player::validateDiscard(char rank, char suit) {
     validateRank(rankConvert);
 
     shared_ptr<Card> card = getCard(rankConvert, suit);
-    if (card == nullptr || hasLegalPlays()) {
+    if (card == nullptr) {
         throw invalid_argument("This is not a legal play.");
+    } else if (hasLegalPlays()) {
+        throw invalid_argument("You have a legal play. You may not discard.");
     } else {
         discard(card);
+        cout << "Player" << playerNumber << " discard " << rank << suit << "." << endl;
     }
 }
 
@@ -125,23 +128,26 @@ bool Player::hasLegalPlays() {
     return true;
 }
 
-vector<shared_ptr<Card>> Player::getLegalPlays() const {
-    return legalPlays;
+PlayerInfo Player::getInfo() const {
+    return PlayerInfo{playerNumber, playerType, score, hand, discards, legalPlays};
 }
 
-vector<shared_ptr<Card>> Player::getHand() const {
-    return hand;
+void Player::tabulateScore() {
+    for (auto discard : discards) {
+        score += discard->getRank();
+    }
 }
 
-int Player::getNum() const {
-    return playerNumber;
-}
-
-int Player::getScore() const {
-    return score;
-}
+void Player::update(vector<shared_ptr<Card>> _hand, vector<shared_ptr<Card>> _discards,
+                    vector<shared_ptr<Card>> _legalPlays, int _score) {
+                        hand = _hand;
+                        discards = _discards;
+                        legalPlays = _legalPlays;
+                        score = _score;
+                    }
 
 void Player::clear() {
     hand.clear();
     discards.clear();
+    legalPlays.clear();
 }

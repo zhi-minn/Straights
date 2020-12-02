@@ -3,6 +3,8 @@
 #include <iostream>
 using namespace std;
 
+const vector<string> suits = {"Clubs:", "Diamonds:", "Hearts:", "Spades:"};
+
 Table::Table() {
     initialise();
 }
@@ -76,6 +78,19 @@ void Table::clearTable() {
     }
 }
 
-vector<shared_ptr<Card>> Table::getPile(int pile) const{
-    return currCards[pile];
+ostream &operator<<(ostream &out, const Table &table) {
+    out << "Cards on the table:" << endl;
+    for (int i = 0; i < 4; i++) {
+        out << suits[i] << " ";
+        for (auto card : table.currCards[i]) {
+            if (card->getRank() == 1 || card->getRank() > 9) {
+                out << card->getDisplayRank();
+            } else {
+                out << card->getRank();
+            }
+            out << " ";
+        }
+        out << endl;
+    }
+    return out;
 }

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "controller.h"
 #include "display.h"
+#include "scoreView.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -17,45 +18,59 @@ int main(int argc, char* argv[]) {
     shared_ptr<Controller> controller = make_shared<Controller>(seed);
     shared_ptr<Display> display = make_shared<Display>();
     display->setTable(controller->getTable());
+    shared_ptr<ScoreView> scoreView = make_shared<ScoreView>();
 
-    for (int i = 1; i <= 4; i++) {
-        cout << "Is Player" << i << " a human (h) or a computer (c)?" << endl;
-        cout << ">";
-        cin >> inp1;
-        controller->addPlayer(inp1, i);
-    }
+    controller->makePlayers();
     controller->setGameStatePlayers();
     controller->attachDisplay(display);
     controller->createDeck();
+
+    scoreView->setPlayers(controller->getPlayers());
 
     while (true) {
         controller->roundBegin();
         while (true) {
             controller->playerTurn();
             cout << *display;
-            while (cout << ">" && cin >> cmd) {
-                try {
-                    if (cmd == "play") {
-                        cin >> inp1 >> inp2;
-                        controller->playCard(inp1, inp2);
-                        break;
-                    } else if (cmd == "discard") {
-                        cin >> inp1 >> inp2;
-                        controller->discard(inp1, inp2);
-                        break;
-                    } else if (cmd == "deck") {
-                        controller->printDeck();
-                    } else if (cmd == "quit") {
-                        exit(0);
-                    } else if (cmd == "ragequit") {
-
-                    } else {
-                        throw invalid_argument("Invalid command: \"" + cmd + "\"");
+            if (controller->isComputerTurn()) {
+                controller->autoplayComputer();
+                controller->nextTurn();
+            } else {
+                while (cout << ">" && cin >> cmd) {
+                    try {
+                        if (cmd == "play") {
+                            cin >> inp1 >> inp2;
+                            controller->playCard(inp1, inp2);
+                            break;
+                        } else if (cmd == "discard") {
+                            cin >> inp1 >> inp2;
+                            controller->discard(inp1, inp2);
+                            break;
+                        } else if (cmd == "deck") {
+                            controller->printDeck();
+                        } else if (cmd == "quit") {
+                            exit(0);
+                        } else if (cmd == "ragequit") {
+                            controller->ragequit();
+                            break;
+                        } else {
+                            throw invalid_argument("Invalid command: \"" + cmd + "\"");
+                        }
+                    } catch (invalid_argument &e) {
+                        cerr << e.what() << endl;
                     }
-                } catch (invalid_argument &e) {
-                    cerr << e.what() << endl;
                 }
             }
+            if (controller->roundEnd()) {
+                cout << *scoreView;
+                controller->tabulateScore();
+                controller->roundReset();
+                break;
+            }
+        }
+        if (controller->gameEnd()) {
+            controller->announceWinners();
+            break;
         }
     }
 }

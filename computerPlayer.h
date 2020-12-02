@@ -8,9 +8,17 @@ class Table;
 
 class ComputerPlayer : public Player {
     public:
-      ComputerPlayer(std::shared_ptr<Table> table, int playerNum);
+      ComputerPlayer(std::shared_ptr<Table> table, int playerNum, char playerType);
 
-      void autoPlay();
+      ComputerPlayer(std::shared_ptr<Table> table, int playerNum, char playerType,
+                      std::vector<std::shared_ptr<Card>> hand,
+                      std::vector<std::shared_ptr<Card>> discards,
+                      std::vector<std::shared_ptr<Card>> legalPlays,
+                      int score);
+
+      bool specialRank(std::shared_ptr<Card>);
+
+      void autoplay();
 };
 
 #endif

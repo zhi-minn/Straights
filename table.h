@@ -27,9 +27,10 @@ class Table {
 
       // Clears table
       void clearTable();
-
-      // Returns specified suit pile
-      std::vector<std::shared_ptr<Card>> getPile(int pile) const;
+    
+    friend std::ostream &operator<<(std::ostream &, const Table &);
 };
+
+std::ostream &operator<<(std::ostream &, const Table &);
 
 #endif

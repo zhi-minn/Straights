@@ -11,6 +11,7 @@ class Card {
       Card(char suit, int rank);
       char getSuit() const;
       int getRank() const;
+      char getDisplayRank() const;
 
     friend std::ostream & operator<<(std::ostream &, const Card &);
 };

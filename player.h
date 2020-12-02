@@ -9,12 +9,22 @@
 class Table;
 class Card;
 
+struct PlayerInfo {
+  int number;
+  char type;
+  int score;
+  std::vector<std::shared_ptr<Card>> hand;
+  std::vector<std::shared_ptr<Card>> discards;
+  std::vector<std::shared_ptr<Card>> legalPlays;
+};
+
 class Player {
     std::shared_ptr<Table> table;
+    int playerNumber;
+    char playerType;
     std::vector<std::shared_ptr<Card>> hand;
     std::vector<std::shared_ptr<Card>> discards;
     std::vector<std::shared_ptr<Card>> legalPlays;
-    int playerNumber;
     int score;
 
     int convertRank(char rank);
@@ -25,13 +35,13 @@ class Player {
   
     public:
       // Initialise Player with table and player number
-      Player(std::shared_ptr<Table> table, int playerNum);
+      Player(std::shared_ptr<Table> table, int playerNum, char playerType);
 
       // Checks if player has 7S
       bool has7S() const;
 
       // Sends card to table
-      void play(std::shared_ptr<Card>);
+      virtual void play(std::shared_ptr<Card>);
 
       // Validates card to be played
       void validateCard(char rank, char suit);
@@ -51,17 +61,17 @@ class Player {
       // Checks whether any legal plays
       bool hasLegalPlays();
 
-      // Returns legal plays
-      std::vector<std::shared_ptr<Card>> getLegalPlays() const;
+      // Returns player type
+      PlayerInfo getInfo() const;
 
-      // Returns current hand
-      std::vector<std::shared_ptr<Card>> getHand() const;
+      // Updates score
+      void tabulateScore();
 
-      // Returns player number
-      int getNum() const;
-
-      // Returns score
-      int getScore() const;
+      // Data transfer functions
+      void update(std::vector<std::shared_ptr<Card>> hand,
+                  std::vector<std::shared_ptr<Card>> discards,
+                  std::vector<std::shared_ptr<Card>> legalPlays,
+                  int score);
 
       // Empties hand and discard pile
       void clear();
