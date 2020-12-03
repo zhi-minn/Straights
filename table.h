@@ -9,6 +9,8 @@ class Card;
 class Table {
     std::vector<std::vector<std::shared_ptr<Card>>> currCards;
 
+    static bool sortByRank(std::shared_ptr<Card> c1, std::shared_ptr<Card> c2);
+
     public:
       // Initialise table
       Table();

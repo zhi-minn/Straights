@@ -1,5 +1,6 @@
 #include "table.h"
 #include "card.h"
+#include <algorithm>
 #include <iostream>
 using namespace std;
 
@@ -7,6 +8,10 @@ const vector<string> suits = {"Clubs:", "Diamonds:", "Hearts:", "Spades:"};
 
 Table::Table() {
     initialise();
+}
+
+bool Table::sortByRank(shared_ptr<Card> c1, shared_ptr<Card> c2) {
+    return c1->getRank() < c2->getRank();
 }
 
 void Table::initialise() {
@@ -32,6 +37,7 @@ void Table::addCard(char suit, shared_ptr<Card> card) {
             break;
     }
     currCards[suitOrder].emplace_back(card);
+    sort(currCards[suitOrder].begin(), currCards[suitOrder].end(), sortByRank);
 }
 
 bool Table::empty() {
