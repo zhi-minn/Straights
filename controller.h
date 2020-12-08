@@ -9,7 +9,7 @@ class Player;
 class GameState;
 class Deck;
 class Display;
-class ScoreView;
+class ScoreView;    
 
 class Controller {
     int seed;

@@ -1,5 +1,6 @@
 #include "computerPlayer.h"
 #include "card.h"
+#include "table.h"
 #include <iostream>
 using namespace std;
 
@@ -15,10 +16,11 @@ ComputerPlayer::ComputerPlayer(shared_ptr<Table> table, int playerNum, char play
         update(hand, discards, legalPlays, score);
     }
 
-void ComputerPlayer::autoplay() {
+void ComputerPlayer::play(shared_ptr<Card> card) {
     if (hasLegalPlays()) {
         shared_ptr<Card> card = getInfo().legalPlays[0];
-        play(card);
+        table->addCard(card->getSuit(), card);
+        hand.erase(hand.begin() + findCard(card));
 
         cout << ">Player" << getInfo().number << " plays ";
         if (specialRank(card)) {

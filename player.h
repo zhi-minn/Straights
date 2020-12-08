@@ -20,10 +20,8 @@ struct PlayerInfo {
 };
 
 class Player {
-    std::shared_ptr<Table> table;
     int playerNumber;
     char playerType;
-    std::vector<std::shared_ptr<Card>> hand;
     std::vector<std::shared_ptr<Card>> discards;
     std::vector<std::shared_ptr<Card>> legalPlays;
     int score;
@@ -31,8 +29,13 @@ class Player {
     int convertRank(char rank);
     void validateRank(int rank);
     std::shared_ptr<Card> getCard(int rank, char suit);
-    int findCard(std::shared_ptr<Card>);
   
+    protected:
+      std::shared_ptr<Table> table;
+      std::vector<std::shared_ptr<Card>> hand;
+
+      int findCard(std::shared_ptr<Card>);
+
     public:
       // Initialise Player with table and player number
       Player(std::shared_ptr<Table> table, int playerNum, char playerType);
@@ -56,7 +59,7 @@ class Player {
       bool has7S() const;
 
       // Sends card to table
-      virtual void play(std::shared_ptr<Card>);
+      virtual void play(std::shared_ptr<Card>) = 0;
 
       // Calculates legal plays
       void setLegalPlays();

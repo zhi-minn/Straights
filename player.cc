@@ -87,13 +87,6 @@ bool Player::has7S() const {
     return false;
 }
 
-void Player::play(shared_ptr<Card> card) {
-    int cardIndex = findCard(card);
-    char suit = card->getSuit();
-    table->addCard(suit, card);
-    hand.erase(hand.begin() + cardIndex);
-}
-
 void Player::setLegalPlays() {
     legalPlays.clear();
     if (table->empty()) {

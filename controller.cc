@@ -40,7 +40,7 @@ void Controller::attachObservers(shared_ptr<Display> &display, shared_ptr<ScoreV
 
 void Controller::autoplayComputer() {
     shared_ptr<Player> player = players[gameState->getTurn()];
-    dynamic_pointer_cast<ComputerPlayer>(player)->autoplay();
+    dynamic_pointer_cast<ComputerPlayer>(player)->play();
 }
 
 void Controller::createDeck() {
