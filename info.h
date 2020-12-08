@@ -6,11 +6,12 @@
 
 class Card;
 class Table;
+class Player;
 
 struct Info {
     std::shared_ptr<Table> table;
-    std::vector<std::shared_ptr<Card>> playerHand;
-    std::vector<std::shared_ptr<Card>> legalPlays;
+    std::vector<std::shared_ptr<Player>> players;
+    int currPlayer;
 };
 
 #endif

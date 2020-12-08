@@ -14,13 +14,13 @@ class Deck {
     public:
       Deck(int seed);
 
-      void shuffleDeck();
-
-      void makeCards();
+      std::shared_ptr<Card> getCard(int pos) const;
 
       int getSize();
 
-      std::shared_ptr<Card> getCard(int pos) const;
+      void makeCards();
+
+      void shuffleDeck();
 
     friend std::ostream & operator<<(std::ostream &, const Deck &);
 };

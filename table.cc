@@ -6,18 +6,12 @@ using namespace std;
 
 const vector<string> suits = {"Clubs:", "Diamonds:", "Hearts:", "Spades:"};
 
-Table::Table() {
-    initialise();
-}
-
 bool Table::sortByRank(shared_ptr<Card> c1, shared_ptr<Card> c2) {
     return c1->getRank() < c2->getRank();
 }
 
-void Table::initialise() {
-    for (int i = 0; i < 4; i++) {
-        currCards.emplace_back(vector<shared_ptr<Card>>());
-    }
+Table::Table() {
+    initialise();
 }
 
 void Table::addCard(char suit, shared_ptr<Card> card) {
@@ -38,11 +32,6 @@ void Table::addCard(char suit, shared_ptr<Card> card) {
     }
     currCards[suitOrder].emplace_back(card);
     sort(currCards[suitOrder].begin(), currCards[suitOrder].end(), sortByRank);
-}
-
-bool Table::empty() {
-    return (currCards[0].empty() && currCards[1].empty() &&
-            currCards[2].empty() && currCards[3].empty());
 }
 
 bool Table::checkLegalPlay(shared_ptr<Card> card) {
@@ -81,6 +70,17 @@ bool Table::checkLegalPlay(shared_ptr<Card> card) {
 void Table::clearTable() {
     for (auto &cardRow : currCards) {
         cardRow.clear();
+    }
+}
+
+bool Table::empty() {
+    return (currCards[0].empty() && currCards[1].empty() &&
+            currCards[2].empty() && currCards[3].empty());
+}
+
+void Table::initialise() {
+    for (int i = 0; i < 4; i++) {
+        currCards.emplace_back(vector<shared_ptr<Card>>());
     }
 }
 

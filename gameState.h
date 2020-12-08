@@ -15,25 +15,25 @@ class GameState : public Subject {
     std::vector<std::shared_ptr<Player>> players;
 
     public:
-      void setPlayers(std::vector<std::shared_ptr<Player>> &);
-
-      bool roundEnd();
-
       bool gameEnd();
 
+      virtual Info getInfo() override;
+
+      int getTurn() const;
+    
       std::vector<int> getWinner();
+    
+      void nextTurn();
+
+      void playerTurn();
+
+      bool roundEnd();
 
       void setCurrPlayer(int playerNum);
 
       void setLowestScore();
 
-      void playerTurn();
-
-      int getTurn() const;
-
-      void nextTurn();
-
-      virtual Info getInfo() override;
+      void setPlayers(std::vector<std::shared_ptr<Player>> &);
 };
 
 #endif

@@ -15,13 +15,6 @@ ComputerPlayer::ComputerPlayer(shared_ptr<Table> table, int playerNum, char play
         update(hand, discards, legalPlays, score);
     }
 
-bool ComputerPlayer::specialRank(shared_ptr<Card> card) {
-    if (card->getRank() == 1 || card->getRank() > 9) {
-        return true;
-    }
-    return false;
-}
-
 void ComputerPlayer::autoplay() {
     if (hasLegalPlays()) {
         shared_ptr<Card> card = getInfo().legalPlays[0];
@@ -46,4 +39,11 @@ void ComputerPlayer::autoplay() {
         }
         cout << card->getSuit() << "." << endl;
     }
+}
+
+bool ComputerPlayer::specialRank(shared_ptr<Card> card) {
+    if (card->getRank() == 1 || card->getRank() > 9) {
+        return true;
+    }
+    return false;
 }

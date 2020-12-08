@@ -3,19 +3,6 @@
 #include <iostream>
 using namespace std;
 
-void GameState::setPlayers(vector<shared_ptr<Player>> &_players) {
-    players = _players;
-}
-
-bool GameState::roundEnd() {
-    for (auto player : players) {
-        if (player->getInfo().hand.size() != 0) {
-            return false;
-        }
-    }
-    return true;
-}
-
 bool GameState::gameEnd() {
     for (auto player : players) {
         if (player->getInfo().score >= 80) {
@@ -23,6 +10,14 @@ bool GameState::gameEnd() {
         }
     }
     return false;
+}
+
+Info GameState::getInfo() {
+    return Info{players[currPlayer]->getInfo().table, players, currPlayer};
+}
+
+int GameState::getTurn() const {
+    return currPlayer;
 }
 
 vector<int> GameState::getWinner() {
@@ -35,16 +30,10 @@ vector<int> GameState::getWinner() {
     return winnerNumbers;
 }
 
-void GameState::setCurrPlayer(int playerNum) {
-    currPlayer = playerNum;
-}
-
-void GameState::setLowestScore() {
-    lowestScore = players[0]->getInfo().score;
-    for (auto player : players) {
-        if (player->getInfo().score < lowestScore) {
-            lowestScore = player->getInfo().score;
-        }
+void GameState::nextTurn() {
+    currPlayer++;
+    if (currPlayer == 4) {
+        currPlayer = 0;
     }
 }
 
@@ -54,17 +43,28 @@ void GameState::playerTurn() {
     notifyObservers();
 }
 
-int GameState::getTurn() const {
-    return currPlayer;
-}
-
-void GameState::nextTurn() {
-    currPlayer++;
-    if (currPlayer == 4) {
-        currPlayer = 0;
+bool GameState::roundEnd() {
+    for (auto player : players) {
+        if (player->getInfo().hand.size() != 0) {
+            return false;
+        }
     }
+    return true;
 }
 
-Info GameState::getInfo() {
-    return Info{players[currPlayer]->getInfo().hand, players[currPlayer]->getInfo().legalPlays};
+void GameState::setCurrPlayer(int playerNum) {
+    currPlayer = playerNum;
+}
+
+void GameState::setPlayers(vector<shared_ptr<Player>> &_players) {
+    players = _players;
+}
+
+void GameState::setLowestScore() {
+    lowestScore = players[0]->getInfo().score;
+    for (auto player : players) {
+        if (player->getInfo().score < lowestScore) {
+            lowestScore = player->getInfo().score;
+        }
+    }
 }

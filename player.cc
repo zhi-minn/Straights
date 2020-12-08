@@ -38,9 +38,6 @@ shared_ptr<Card> Player::getCard(int rank, char suit) {
     return nullptr;
 }
 
-Player::Player(shared_ptr<Table> table, int playerNum, char playerType)
-    : table{table}, playerNumber{playerNum}, playerType{playerType} {}
-
 int Player::findCard(shared_ptr<Card> card) {
     for (size_t i = 0; i < hand.size(); i++) {
         if (*hand[i] == *card) {
@@ -48,6 +45,37 @@ int Player::findCard(shared_ptr<Card> card) {
         }
     }
     return 0;
+}
+
+Player::Player(shared_ptr<Table> table, int playerNum, char playerType)
+    : table{table}, playerNumber{playerNum}, playerType{playerType} {}
+
+
+void Player::addCard(shared_ptr<Card> card) {
+    hand.emplace_back(card);
+}
+
+void Player::clear() {
+    hand.clear();
+    discards.clear();
+    legalPlays.clear();
+}
+
+void Player::discard(shared_ptr<Card> card) {
+    int cardIndex = findCard(card);
+    discards.emplace_back(card);
+    hand.erase(hand.begin() + cardIndex);
+}
+
+PlayerInfo Player::getInfo() const {
+    return PlayerInfo{playerNumber, playerType, score, hand, discards, legalPlays, table};
+}
+
+bool Player::hasLegalPlays() {
+    if (legalPlays.empty()) {
+        return false;
+    }
+    return true;
 }
 
 bool Player::has7S() const {
@@ -64,44 +92,6 @@ void Player::play(shared_ptr<Card> card) {
     char suit = card->getSuit();
     table->addCard(suit, card);
     hand.erase(hand.begin() + cardIndex);
-}
-
-void Player::validateCard(char rank, char suit) {
-    int rankConvert = convertRank(rank);
-    validateRank(rankConvert);
-
-    shared_ptr<Card> card = getCard(rankConvert, suit);
-    if (card != nullptr) {
-        play(card);
-        cout << "Player" << playerNumber << " plays " << rank << suit << "." << endl;
-    } else {
-        throw invalid_argument("This is not a legal play.");
-    }
-}
-
-void Player::addCard(shared_ptr<Card> card) {
-    hand.emplace_back(card);
-}
-
-void Player::discard(shared_ptr<Card> card) {
-    int cardIndex = findCard(card);
-    discards.emplace_back(card);
-    hand.erase(hand.begin() + cardIndex);
-}
-
-void Player::validateDiscard(char rank, char suit) {
-    int rankConvert = convertRank(rank);
-    validateRank(rankConvert);
-
-    shared_ptr<Card> card = getCard(rankConvert, suit);
-    if (card == nullptr) {
-        throw invalid_argument("This is not a legal play.");
-    } else if (hasLegalPlays()) {
-        throw invalid_argument("You have a legal play. You may not discard.");
-    } else {
-        discard(card);
-        cout << "Player" << playerNumber << " discard " << rank << suit << "." << endl;
-    }
 }
 
 void Player::setLegalPlays() {
@@ -122,17 +112,6 @@ void Player::setLegalPlays() {
     }
 }
 
-bool Player::hasLegalPlays() {
-    if (legalPlays.empty()) {
-        return false;
-    }
-    return true;
-}
-
-PlayerInfo Player::getInfo() const {
-    return PlayerInfo{playerNumber, playerType, score, hand, discards, legalPlays, table};
-}
-
 void Player::tabulateScore() {
     for (auto discard : discards) {
         score += discard->getRank();
@@ -147,8 +126,30 @@ void Player::update(vector<shared_ptr<Card>> _hand, vector<shared_ptr<Card>> _di
                         score = _score;
                     }
 
-void Player::clear() {
-    hand.clear();
-    discards.clear();
-    legalPlays.clear();
+void Player::validateCard(char rank, char suit) {
+    int rankConvert = convertRank(rank);
+    validateRank(rankConvert);
+
+    shared_ptr<Card> card = getCard(rankConvert, suit);
+    if (card != nullptr) {
+        play(card);
+        cout << "Player" << playerNumber << " plays " << rank << suit << "." << endl;
+    } else {
+        throw invalid_argument("This is not a legal play.");
+    }
+}
+
+void Player::validateDiscard(char rank, char suit) {
+    int rankConvert = convertRank(rank);
+    validateRank(rankConvert);
+
+    shared_ptr<Card> card = getCard(rankConvert, suit);
+    if (card == nullptr) {
+        throw invalid_argument("This is not a legal play.");
+    } else if (hasLegalPlays()) {
+        throw invalid_argument("You have a legal play. You may not discard.");
+    } else {
+        discard(card);
+        cout << "Player" << playerNumber << " discard " << rank << suit << "." << endl;
+    }
 }

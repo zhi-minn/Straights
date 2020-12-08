@@ -16,23 +16,6 @@ Controller::Controller(int seed): seed{seed} {
     deck = make_shared<Deck>(seed);
 }
 
-void Controller::announceWinners() {
-    vector<int> winnerNumbers = gameState->getWinner();
-    for (auto number : winnerNumbers) {
-        cout << "Player" << number << " wins!" << endl;
-    }
-}
-
-void Controller::makePlayers() {
-    char inp;
-    for (int i = 1; i <= 4; i++) {
-        cout << "Is Player" << i << " a human(h) or a computer(c)?" << endl;
-        cout << ">";
-        cin >> inp;
-        addPlayer(inp, i);
-    }
-}
-
 void Controller::addPlayer(char type, int playerNum) {
     assert(type == 'c' || type == 'h');
     if (type == 'h') {
@@ -42,12 +25,24 @@ void Controller::addPlayer(char type, int playerNum) {
     }
 }
 
-void Controller::createDeck() {
-    deck->makeCards();
+void Controller::announceWinners() {
+    vector<int> winnerNumbers = gameState->getWinner();
+    for (auto number : winnerNumbers) {
+        cout << "Player" << number << " wins!" << endl;
+    }
 }
 
-void Controller::shuffleDeck() {
-    deck->shuffleDeck();
+void Controller::attachDisplay(shared_ptr<Display> &display) {
+    gameState->attach(display.get());
+}
+
+void Controller::autoplayComputer() {
+    shared_ptr<Player> player = players[gameState->getTurn()];
+    dynamic_pointer_cast<ComputerPlayer>(player)->autoplay();
+}
+
+void Controller::createDeck() {
+    deck->makeCards();
 }
 
 void Controller::dealCards() {
@@ -63,6 +58,77 @@ void Controller::dealCards() {
             players[3]->addCard(deck->getCard(i));
         }
     }
+}
+
+void Controller::discard(char rank, char suit) {
+    int turn = gameState->getTurn();
+    players[turn]->validateDiscard(rank, suit);
+    gameState->nextTurn();
+}
+
+bool Controller::gameEnd() {
+    return gameState->gameEnd();
+}
+
+vector<shared_ptr<Player>> Controller::getPlayers() const {
+    return players;
+}
+
+shared_ptr<Table> Controller::getTable() const {
+    return table;
+}
+
+bool Controller::isComputerTurn() {
+    shared_ptr<Player> player = players[gameState->getTurn()];
+    if (player->getInfo().type == 'c') {
+        return true;
+    }
+    return false;
+}
+
+void Controller::makePlayers() {
+    char inp;
+    for (int i = 1; i <= 4; i++) {
+        cout << "Is Player" << i << " a human(h) or a computer(c)?" << endl;
+        cout << ">";
+        cin >> inp;
+        addPlayer(inp, i);
+    }
+}
+
+void Controller::nextTurn() {
+    gameState->nextTurn();
+}
+
+void Controller::playCard(char rank, char suit) {
+    int turn = gameState->getTurn();
+    players[turn]->validateCard(rank, suit);    
+    gameState->nextTurn();
+}
+
+void Controller::playerTurn() {
+    gameState->playerTurn();
+}
+
+void Controller::printDeck() const {
+    cout << *deck;
+}
+
+void Controller::ragequit() {
+    cout << "Player" << gameState->getTurn()+1 << " ragequits. ";
+    cout << "A computer will now take over." << endl;
+    
+    PlayerInfo info = players[gameState->getTurn()]->getInfo();
+    vector<shared_ptr<Card>> hand = info.hand;
+    vector<shared_ptr<Card>> discards = info.discards;
+    vector<shared_ptr<Card>> legalPlays = info.legalPlays;
+    shared_ptr<Player> computer = make_shared<ComputerPlayer>(table, info.number,
+                                                            'c', hand, discards,
+                                                            legalPlays, info.score);
+    players[info.number-1] = computer;
+    gameState->setPlayers(players);
+    autoplayComputer();
+    gameState->nextTurn();
 }
 
 void Controller::roundBegin() {
@@ -89,78 +155,12 @@ void Controller::roundReset() {
     table->clearTable();
 }
 
-bool Controller::gameEnd() {
-    return gameState->gameEnd();
-}
-
 void Controller::setGameStatePlayers() {
     gameState->setPlayers(players);
 }
 
-vector<shared_ptr<Player>> Controller::getPlayers() const {
-    return players;
-}
-
-void Controller::attachDisplay(shared_ptr<Display> &display) {
-    gameState->attach(display.get());
-}
-
-shared_ptr<Table> Controller::getTable() const {
-    return table;
-}
-
-void Controller::printDeck() const {
-    cout << *deck;
-}
-
-void Controller::playerTurn() {
-    gameState->playerTurn();
-}
-
-bool Controller::isComputerTurn() {
-    shared_ptr<Player> player = players[gameState->getTurn()];
-    if (player->getInfo().type == 'c') {
-        return true;
-    }
-    return false;
-}
-
-void Controller::nextTurn() {
-    gameState->nextTurn();
-}
-
-void Controller::autoplayComputer() {
-    shared_ptr<Player> player = players[gameState->getTurn()];
-    dynamic_pointer_cast<ComputerPlayer>(player)->autoplay();
-}
-
-void Controller::ragequit() {
-    cout << "Player" << gameState->getTurn()+1 << " ragequits. ";
-    cout << "A computer will now take over." << endl;
-    
-    PlayerInfo info = players[gameState->getTurn()]->getInfo();
-    vector<shared_ptr<Card>> hand = info.hand;
-    vector<shared_ptr<Card>> discards = info.discards;
-    vector<shared_ptr<Card>> legalPlays = info.legalPlays;
-    shared_ptr<Player> computer = make_shared<ComputerPlayer>(table, info.number,
-                                                            'c', hand, discards,
-                                                            legalPlays, info.score);
-    players[info.number-1] = computer;
-    gameState->setPlayers(players);
-    autoplayComputer();
-    gameState->nextTurn();
-}
-
-void Controller::playCard(char rank, char suit) {
-    int turn = gameState->getTurn();
-    players[turn]->validateCard(rank, suit);    
-    gameState->nextTurn();
-}
-
-void Controller::discard(char rank, char suit) {
-    int turn = gameState->getTurn();
-    players[turn]->validateDiscard(rank, suit);
-    gameState->nextTurn();
+void Controller::shuffleDeck() {
+    deck->shuffleDeck();
 }
 
 void Controller::tabulateScore() {

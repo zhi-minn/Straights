@@ -16,9 +16,9 @@ class ComputerPlayer : public Player {
                       std::vector<std::shared_ptr<Card>> legalPlays,
                       int score);
 
-      bool specialRank(std::shared_ptr<Card>);
-
       void autoplay();
+
+      bool specialRank(std::shared_ptr<Card>);
 };
 
 #endif

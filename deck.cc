@@ -6,9 +6,12 @@ using namespace std;
 
 Deck::Deck(int seed): seed{seed} {}
 
-void Deck::shuffleDeck() {
-    std::default_random_engine rng{seed};
-    std::shuffle(cards.begin(), cards.end(), rng);
+shared_ptr<Card> Deck::getCard(int pos) const {
+    return cards[pos];
+}
+
+int Deck::getSize() {
+    return cards.size();
 }
 
 void Deck::makeCards() {
@@ -31,12 +34,9 @@ void Deck::makeCards() {
     }
 }
 
-int Deck::getSize() {
-    return cards.size();
-}
-
-shared_ptr<Card> Deck::getCard(int pos) const {
-    return cards[pos];
+void Deck::shuffleDeck() {
+    std::default_random_engine rng{seed};
+    std::shuffle(cards.begin(), cards.end(), rng);
 }
 
 ostream &operator<<(ostream & out, const Deck & deck) {

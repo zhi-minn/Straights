@@ -31,12 +31,26 @@ class Player {
     int convertRank(char rank);
     void validateRank(int rank);
     std::shared_ptr<Card> getCard(int rank, char suit);
-    // Finds index of card in hand
     int findCard(std::shared_ptr<Card>);
   
     public:
       // Initialise Player with table and player number
       Player(std::shared_ptr<Table> table, int playerNum, char playerType);
+
+      // Adds card to hand
+      void addCard(std::shared_ptr<Card>);
+
+      // Empties hand and discard pile
+      void clear();
+
+      // Dicards card
+      void discard(std::shared_ptr<Card>);
+
+      // Returns player type
+      PlayerInfo getInfo() const;
+
+      // Checks whether any legal plays
+      bool hasLegalPlays();
 
       // Checks if player has 7S
       bool has7S() const;
@@ -44,26 +58,8 @@ class Player {
       // Sends card to table
       virtual void play(std::shared_ptr<Card>);
 
-      // Validates card to be played
-      void validateCard(char rank, char suit);
-
-      // Adds card to hand
-      void addCard(std::shared_ptr<Card>);
-
-      // Dicards card
-      void discard(std::shared_ptr<Card>);
-
-      // Validates discard
-      void validateDiscard(char rank, char suit);
-
       // Calculates legal plays
       void setLegalPlays();
-
-      // Checks whether any legal plays
-      bool hasLegalPlays();
-
-      // Returns player type
-      PlayerInfo getInfo() const;
 
       // Updates score
       void tabulateScore();
@@ -74,8 +70,11 @@ class Player {
                   std::vector<std::shared_ptr<Card>> legalPlays,
                   int score);
 
-      // Empties hand and discard pile
-      void clear();
+      // Validates card to be played
+      void validateCard(char rank, char suit);
+
+      // Validates discard
+      void validateDiscard(char rank, char suit);
 };
 
 #endif
