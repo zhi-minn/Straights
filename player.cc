@@ -144,10 +144,10 @@ void Player::validateDiscard(char rank, char suit) {
     validateRank(rankConvert);
 
     shared_ptr<Card> card = getCard(rankConvert, suit);
-    if (card == nullptr) {
-        throw invalid_argument("This is not a legal play.");
-    } else if (hasLegalPlays()) {
+    if (hasLegalPlays()) {
         throw invalid_argument("You have a legal play. You may not discard.");
+    } else if (card == nullptr) {
+        throw invalid_argument("This is not a legal play.");
     } else {
         discard(card);
         cout << "Player" << playerNumber << " discard " << rank << suit << "." << endl;
