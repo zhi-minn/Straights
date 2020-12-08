@@ -4,8 +4,8 @@
 #include <iostream>
 using namespace std;
 
-void ScoreView::setPlayers(vector<shared_ptr<Player>> _players) {
-    players = _players;
+void ScoreView::notify( Subject & whoNotified ) {
+    players = whoNotified.getInfo().players;
 }
 
 ostream &operator<<(ostream &out, const ScoreView &scoreView) {

@@ -9,6 +9,7 @@ class Player;
 class GameState;
 class Deck;
 class Display;
+class ScoreView;
 
 class Controller {
     int seed;
@@ -24,7 +25,7 @@ class Controller {
       
       void announceWinners();
 
-      void attachDisplay(std::shared_ptr<Display> &);
+      void attachObservers(std::shared_ptr<Display> &, std::shared_ptr<ScoreView> &);
 
       void autoplayComputer(); 
 

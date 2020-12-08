@@ -5,6 +5,7 @@
 #include "deck.h"
 #include "gameState.h"
 #include "display.h"
+#include "scoreView.h"
 #include "card.h"
 #include <assert.h>
 #include <iostream>
@@ -32,8 +33,9 @@ void Controller::announceWinners() {
     }
 }
 
-void Controller::attachDisplay(shared_ptr<Display> &display) {
+void Controller::attachObservers(shared_ptr<Display> &display, shared_ptr<ScoreView> &sv) {
     gameState->attach(display.get());
+    gameState->attach(sv.get());
 }
 
 void Controller::autoplayComputer() {

@@ -1,16 +1,17 @@
 #ifndef SCORE_VIEW_H
 #define SCORE_VIEW_H
 
+#include "observer.h"
 #include <vector>
 #include <memory>
 
 class Player;
 
-class ScoreView {
+class ScoreView : public Observer {
     std::vector<std::shared_ptr<Player>> players;
 
     public:
-        void setPlayers(std::vector<std::shared_ptr<Player>>);
+      virtual void notify( Subject & whoNotified ) override;
 
     friend std::ostream &operator<<(std::ostream &, const ScoreView &);
 };

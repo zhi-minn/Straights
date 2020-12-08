@@ -22,10 +22,8 @@ int main(int argc, char* argv[]) {
 
     controller->makePlayers();
     controller->setGameStatePlayers();
-    controller->attachDisplay(display);
+    controller->attachObservers(display, scoreView);
     controller->createDeck();
-
-    scoreView->setPlayers(controller->getPlayers());
 
     while (true) {
         controller->roundBegin();
@@ -52,7 +50,6 @@ int main(int argc, char* argv[]) {
                             exit(0);
                         } else if (cmd == "ragequit") {
                             controller->ragequit();
-                            scoreView->setPlayers(controller->getPlayers());
                             break;
                         } else {
                             throw invalid_argument("Invalid command: \"" + cmd + "\"");

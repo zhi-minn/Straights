@@ -58,6 +58,7 @@ void GameState::setCurrPlayer(int playerNum) {
 
 void GameState::setPlayers(vector<shared_ptr<Player>> &_players) {
     players = _players;
+    notifyObservers();
 }
 
 void GameState::setLowestScore() {
