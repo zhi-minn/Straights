@@ -29,11 +29,11 @@ int main(int argc, char* argv[]) {
         controller->roundBegin();
         while (true) {
             controller->playerTurn();
-            cout << *display;
             if (controller->isComputerTurn()) {
                 controller->autoplayComputer();
                 controller->nextTurn();
             } else {
+                cout << *display;
                 while (cout << ">" && cin >> cmd) {
                     try {
                         if (cmd == "play") {
