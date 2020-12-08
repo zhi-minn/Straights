@@ -15,8 +15,6 @@ class Display: public Observer {
     std::vector<std::shared_ptr<Card>> legalPlays;
 
     public:
-      void setTable(std::shared_ptr<Table>);
-
       virtual void notify( Subject & whoNotified ) override;
 
     friend std::ostream &operator<<(std::ostream &out, const Display &td);

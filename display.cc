@@ -5,12 +5,9 @@
 #include "info.h"
 using namespace std;
 
-void Display::setTable(shared_ptr<Table> _table) {
-    table = _table;
-}
-
 void Display::notify( Subject & whoNotified ) {
     Info info = whoNotified.getInfo();
+    table = info.table;
     playerHand = info.playerHand;
     legalPlays = info.legalPlays;
 }

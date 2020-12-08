@@ -16,6 +16,7 @@ struct PlayerInfo {
   std::vector<std::shared_ptr<Card>> hand;
   std::vector<std::shared_ptr<Card>> discards;
   std::vector<std::shared_ptr<Card>> legalPlays;
+  std::shared_ptr<Table> table;
 };
 
 class Player {

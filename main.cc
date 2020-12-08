@@ -18,7 +18,6 @@ int main(int argc, char* argv[]) {
     }
     shared_ptr<Controller> controller = make_shared<Controller>(seed);
     shared_ptr<Display> display = make_shared<Display>();
-    display->setTable(controller->getTable());
     shared_ptr<ScoreView> scoreView = make_shared<ScoreView>();
 
     controller->makePlayers();

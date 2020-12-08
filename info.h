@@ -5,8 +5,10 @@
 #include <vector>
 
 class Card;
+class Table;
 
 struct Info {
+    std::shared_ptr<Table> table;
     std::vector<std::shared_ptr<Card>> playerHand;
     std::vector<std::shared_ptr<Card>> legalPlays;
 };

@@ -130,7 +130,7 @@ bool Player::hasLegalPlays() {
 }
 
 PlayerInfo Player::getInfo() const {
-    return PlayerInfo{playerNumber, playerType, score, hand, discards, legalPlays};
+    return PlayerInfo{playerNumber, playerType, score, hand, discards, legalPlays, table};
 }
 
 void Player::tabulateScore() {
