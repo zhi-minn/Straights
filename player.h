@@ -23,16 +23,16 @@ class Player {
     int playerNumber;
     char playerType;
     std::vector<std::shared_ptr<Card>> discards;
-    std::vector<std::shared_ptr<Card>> legalPlays;
     int score;
 
     int convertRank(char rank);
     void validateRank(int rank);
-    std::shared_ptr<Card> getCard(int rank, char suit);
+    std::shared_ptr<Card> getCard(int rank, char suit, bool playCard);
   
     protected:
       std::shared_ptr<Table> table;
       std::vector<std::shared_ptr<Card>> hand;
+      std::vector<std::shared_ptr<Card>> legalPlays;
 
       int findCard(std::shared_ptr<Card>);
 

@@ -29,12 +29,20 @@ void Player::validateRank(int rank) {
     }
 }
 
-shared_ptr<Card> Player::getCard(int rank, char suit) {
-    for (auto card : legalPlays) {
+shared_ptr<Card> Player::getCard(int rank, char suit, bool playCard) {
+    vector<shared_ptr<Card>> search;
+    if (playCard) {
+        search = legalPlays;
+    } else {
+        search = hand;
+    }
+
+    for (auto card : search) {
         if (card->getRank() == rank && card->getSuit() == suit) {
             return card;
         }
     }
+
     return nullptr;
 }
 
@@ -123,7 +131,7 @@ void Player::validateCard(char rank, char suit) {
     int rankConvert = convertRank(rank);
     validateRank(rankConvert);
 
-    shared_ptr<Card> card = getCard(rankConvert, suit);
+    shared_ptr<Card> card = getCard(rankConvert, suit, true);
     if (card != nullptr) {
         play(card);
         cout << "Player" << playerNumber << " plays " << rank << suit << "." << endl;
@@ -136,7 +144,7 @@ void Player::validateDiscard(char rank, char suit) {
     int rankConvert = convertRank(rank);
     validateRank(rankConvert);
 
-    shared_ptr<Card> card = getCard(rankConvert, suit);
+    shared_ptr<Card> card = getCard(rankConvert, suit, false);
     if (hasLegalPlays()) {
         throw invalid_argument("You have a legal play. You may not discard.");
     } else if (card == nullptr) {

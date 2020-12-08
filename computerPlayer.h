@@ -6,8 +6,11 @@
 
 class Table;
 class Card;
+class Strategy;
 
 class ComputerPlayer : public Player {
+  std::unique_ptr<Strategy> strategy;
+
   public:
     ComputerPlayer(std::shared_ptr<Table> table, int playerNum, char playerType);
 
@@ -18,6 +21,8 @@ class ComputerPlayer : public Player {
                     int score);
 
     void play(std::shared_ptr<Card> = nullptr) override;
+
+    void setStrategy(std::unique_ptr<Strategy>);
 
     bool specialRank(std::shared_ptr<Card>);
 };

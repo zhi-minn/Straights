@@ -1,11 +1,14 @@
 #include "computerPlayer.h"
 #include "card.h"
 #include "table.h"
+#include "defaultStrat.h"
 #include <iostream>
 using namespace std;
 
 ComputerPlayer::ComputerPlayer(shared_ptr<Table> table, int playerNum, char playerType)
-    : Player(table, playerNum, playerType) {}
+    : Player(table, playerNum, playerType) {
+        setStrategy(make_unique<DefaultStrategy>());
+    }
 
 ComputerPlayer::ComputerPlayer(shared_ptr<Table> table, int playerNum, char playerType,
                       vector<shared_ptr<Card>> hand,
@@ -14,11 +17,12 @@ ComputerPlayer::ComputerPlayer(shared_ptr<Table> table, int playerNum, char play
                       int score)
     : Player(table, playerNum, playerType) {
         update(hand, discards, legalPlays, score);
+        setStrategy(make_unique<DefaultStrategy>());
     }
 
 void ComputerPlayer::play(shared_ptr<Card> card) {
     if (hasLegalPlays()) {
-        shared_ptr<Card> card = getInfo().legalPlays[0];
+        shared_ptr<Card> card = strategy->playStrategy(true, table, legalPlays, hand);
         table->addCard(card->getSuit(), card);
         hand.erase(hand.begin() + findCard(card));
 
@@ -30,7 +34,7 @@ void ComputerPlayer::play(shared_ptr<Card> card) {
         }
         cout << card->getSuit() << "." << endl;
     } else {
-        shared_ptr<Card> card = getInfo().hand[0];
+        shared_ptr<Card> card = strategy->playStrategy(false, table, legalPlays, hand);
         discard(card);
 
         cout << ">Player" << getInfo().number << " discards ";
@@ -41,6 +45,11 @@ void ComputerPlayer::play(shared_ptr<Card> card) {
         }
         cout << card->getSuit() << "." << endl;
     }
+}
+
+void ComputerPlayer::setStrategy(unique_ptr<Strategy> _strategy) {
+    strategy.reset();
+    strategy = move(_strategy);
 }
 
 bool ComputerPlayer::specialRank(shared_ptr<Card> card) {

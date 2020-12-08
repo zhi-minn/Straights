@@ -7,6 +7,7 @@
 #include "display.h"
 #include "scoreView.h"
 #include "card.h"
+#include "strategy.h"
 #include <assert.h>
 #include <iostream>
 using namespace std;
