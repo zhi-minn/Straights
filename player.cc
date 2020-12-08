@@ -30,7 +30,7 @@ void Player::validateRank(int rank) {
 }
 
 shared_ptr<Card> Player::getCard(int rank, char suit) {
-    for (auto card : hand) {
+    for (auto card : legalPlays) {
         if (card->getRank() == rank && card->getSuit() == suit) {
             return card;
         }
