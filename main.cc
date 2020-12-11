@@ -10,6 +10,8 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+    bool forcequit = false;
+
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     string cmd;
     char inp1, inp2;
@@ -47,7 +49,8 @@ int main(int argc, char* argv[]) {
                         } else if (cmd == "deck") {
                             controller->printDeck();
                         } else if (cmd == "quit") {
-                            exit(0);
+			    forcequit = true;
+                            goto END;
                         } else if (cmd == "ragequit") {
                             controller->ragequit();
                             break;
@@ -70,5 +73,10 @@ int main(int argc, char* argv[]) {
             controller->announceWinners();
             break;
         }
+	// Facilitate quit functionality
+        END:
+	if (forcequit) {
+	    break;
+	}
     }
 }

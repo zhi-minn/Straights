@@ -23,7 +23,7 @@ class Player {
     int playerNumber;
     char playerType;
     std::vector<std::shared_ptr<Card>> discards;
-    int score;
+    int score = 0;
 
     int convertRank(char rank);
     void validateRank(int rank);
